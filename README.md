@@ -278,6 +278,7 @@ public class Person {
 }
 ```
 这个由于要为每个属性单独注解，使用起来并不友好，并且功能不如@ConfigurationProperties强大
+
 ![](https://img2018.cnblogs.com/blog/1418974/201907/1418974-20190728164637719-1038154879.png)
 
 - 松散绑定：对于配置文件与类中的值不需要完全相同，比如配置文件中是last-name类是lastName也能绑定上
@@ -305,3 +306,27 @@ public class Person {
 }
 ```
 此时也能配置上，但是一般不这样使用
+
+### 多环境配置
+我们可以为不同场景的环境进行不同的配置，并且可以在properties中配置，也可以在yml文件中配置
+如果在properties中配置，则需要新建多个properties文件，命名格式为：``application-环境名.properties``，在主配置文件中
+使用``spring.profiles.active=环境名``进行激活
+如果在yml中配置，则可以使用---当作分隔符，实现多文本，只需要在每个文本块中使用
+```yaml
+spring:
+    profiles: 环境名
+```
+即可设置环境的名字。
+
+
+**ps：当我们在yml与properties配置了相同的环境名时，properties的优先级更高**
+
+### springboot配置文件生效范围
+springboot的配置文件可以放在四个地方：
+
+1. 项目根目录下的config文件夹中：优先级1
+2. 项目根目录下：优先级2
+3. classpath下的config文件夹中：优先级3
+4. classpath下：优先级4
+
+默认创建的配置文件优先级最低，当配置文件放在不同的地方时，配置文件互补，都配置了的以高优先级的为准

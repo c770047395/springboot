@@ -1,10 +1,14 @@
-person:
-  name: cp
-  age: 5
-  happy: false
-  birth: 1998/1/11
-  maps: {h1: hello1,h2: hello2}
-  lists: [cp1,cp2,cp3]
-  dog:
-    name: dog
-    age: 1
+server:
+  port: 8084
+
+---
+server:
+  port: 8085
+spring:
+  profiles: dev2 #指定环境的名字
+---
+server:
+  port: 8086
+spring:
+  profiles: test
+---
