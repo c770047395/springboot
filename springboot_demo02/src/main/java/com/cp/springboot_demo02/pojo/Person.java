@@ -1,6 +1,8 @@
 package com.cp.springboot_demo02.pojo;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -9,8 +11,10 @@ import java.util.Map;
 
 //怎么把配置文件的值绑定到对象中：
 @Component//被容器托管
-@ConfigurationProperties(prefix = "person")
+@PropertySource(value = "classpath:person.properties")//加载制定的配置文件
+//@ConfigurationProperties(prefix = "person")
 public class Person {
+    @Value("${name}")
     private String name;
     private Integer age;
     private Boolean happy;

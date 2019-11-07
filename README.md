@@ -288,3 +288,20 @@ public class Person {
 - 配置yml和配置properties都可以获取到值 ， 强烈推荐 yml
 - 如果我们在某个业务中，只需要获取配置文件中的某个值，可以使用一下 @value
 - 如果说，我们专门编写了一个JavaBean来和配置文件进行映射，就直接使用@configurationProperties，不要犹豫！
+
+**单个配置文件的引用**
+
+@ConfigurationProperties注解是从全局配置文件application.yml/application.properties中获取属性，除此之外，我们还可以用
+@PropertySource(value="classpath:xxx.properties")注解引入单个类的配置文件，并通过@Value为属性赋值
+```java
+//怎么把配置文件的值绑定到对象中：
+@Component//被容器托管
+@PropertySource(value = "classpath:person.properties")//加载制定的配置文件
+//@ConfigurationProperties(prefix = "person")
+public class Person {
+    @Value("${name}")
+    private String name;
+    ......
+}
+```
+此时也能配置上，但是一般不这样使用
