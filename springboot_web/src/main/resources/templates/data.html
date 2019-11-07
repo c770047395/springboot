@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thymeleaf</title>
+    <link rel="stylesheet"
+</head>
+<body>
+
+<div th:text="${msg}">hello</div>
+<div th:utext="${msg}">hello</div>
+
+<!--对象遍历-->
+
+<h3 th:each="user:${users}" th:text="${user}"></h3>
+<hr>
+<!--行写法-->
+<p th:each="user:${users}">[[${user}]]</p>
+
+</body>
+</html>

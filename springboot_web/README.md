@@ -30,3 +30,33 @@ public void addResourceHandlers(ResourceHandlerRegistry registry) {
 }
 ```
 
+## Thymeleaf模板引擎
+
+### Thymeleaf的使用
+1. 导入Thymeleaf依赖
+2. 编写controller
+3. 编写html文件，需要放在templates下以html结尾
+
+这些在ThymeleafProperties中可以看到
+```java
+@ConfigurationProperties(
+    prefix = "spring.thymeleaf"
+)
+public class ThymeleafProperties {
+    private static final Charset DEFAULT_ENCODING;
+    public static final String DEFAULT_PREFIX = "classpath:/templates/";
+    public static final String DEFAULT_SUFFIX = ".html";
+    ...
+}
+```
+
+### Thymeleaf语法
+
+1. 导入命名空间
+2. 判断选择使用哪种表达式
+   - ${...}变量
+   - *{...}变量
+   - \#{...}对象
+   - @{...}url
+   - ~{...}引入Fragment
+3. 要实现页面可以ctrl+F9刷新，需要关闭缓存``spring.thymeleaf.cache=false``
