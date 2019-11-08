@@ -60,3 +60,38 @@ public class ThymeleafProperties {
    - @{...}url
    - ~{...}引入Fragment
 3. 要实现页面可以ctrl+F9刷新，需要关闭缓存``spring.thymeleaf.cache=false``
+
+
+## SpringMVC自动配置
+
+### 托管SpringMVC
+原来配置SpringMVC要在xml文件中配置，现在如何进行配置呢？
+
+1. SpringMVC自动配置：如果用户没有配置，则使用自动配置，如果用户配置了，如果只支持一种方式则用用户配置的，否则将自动配置和用户配置共同使用。
+
+2. 拓展SpringMVC（推荐使用）
+   - 写一个拓展类
+   - 加上@Configuration
+   - 实现接口WebMvcConfigurer
+   - 实现自定义配置
+   
+3. 全面接管SpringMVC（不用使用）
+   - SpringMVC自动配置会无效
+   - 在@Configuration类上加上@EnableWebMvc
+
+### 实现首页
+
+1. 在Controller配置，但是不推荐
+2. 使用拓展SpringMVC
+```java
+//扩展MVC并且不影响Springboot的默认配置【官方推荐使用】
+@Configuration
+public class MyMvcConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("index");
+        registry.addViewController("/index.html").setViewName("index");
+    }
+}
+```
