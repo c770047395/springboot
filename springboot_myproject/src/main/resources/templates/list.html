@@ -75,7 +75,7 @@
 									<td>[[${e.department.departmentName}]]</td>
 									<td th:text="${#dates.format(e.birth,'yyyy-MM-dd')}"></td>
 									<td>
-										<a class="btn btn-sm btn-primary" th:href="@{/update/}+${e.id}">编辑</a>
+										<a class="btn btn-sm btn-primary" th:href="@{/toUpdatePage/}+${e.id}">编辑</a>
 										<a class="btn btn-sm btn-danger" th:href="@{/delete/}+${e.id}">删除</a>
 									</td>
 								</tr>
