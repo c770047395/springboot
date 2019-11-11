@@ -113,3 +113,25 @@ protected void configure(HttpSecurity http) throws Exception {
     http.csrf().disable();
 }
 ```
+
+**记住我功能：**
+
+同样，在configure里开启http.rememberMe()就开启了记住我功能
+```java
+//开启记住我功能，使用cookie，默认保持两周
+http.rememberMe();
+```
+
+**首页定制：**
+
+如果不想用spring security自带的登陆页面（一般也不会使用），可以使用``loginPage()``方法定制页面
+```java
+http.loginPage("/toLogin");
+```
+只需要将自己定制的登陆页面的表单使用post方式提到到此地址就可以完成登陆，如果想定制表单的name，可以使用``xxxParameter()``方法设置表单name
+```java
+//没有权限默认会调到登陆页面
+http.formLogin().usernameParameter("user").passwordParameter("pwd").loginPage("/toLogin");
+//开启记住我功能，使用cookie，默认保持两周
+http.rememberMe().rememberMeParameter("remember");
+```

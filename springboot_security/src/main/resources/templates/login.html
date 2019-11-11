@@ -15,7 +15,7 @@
 	</head>
 
 	<body class="text-center">
-		<form class="form-signin" th:action="@{/user/login}" method="post" action="dashboard.html">
+		<form class="form-signin" th:action="@{/toLogin}" method="post" action="dashboard.html">
 			<img class="mb-4" th:src="@{/asserts/img/bootstrap-solid.svg}" src="asserts/img/bootstrap-solid.svg" alt="" width="72" height="72">
 			<h1 class="h3 mb-3 font-weight-normal" >Please sign in</h1>
 
@@ -23,12 +23,12 @@
 			<p style="color:red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
 
 			<label class="sr-only">Username</label>
-			<input type="text" class="form-control" name="username" placeholder="Username"  required="" autofocus="">
+			<input type="text" class="form-control" name="user" placeholder="Username"  required="" autofocus="">
 			<label class="sr-only">Password</label>
-			<input type="password" class="form-control" name="password" placeholder="Password"  required="">
+			<input type="password" class="form-control" name="pwd" placeholder="Password"  required="">
 			<div class="checkbox mb-3">
 				<label>
-          <input type="checkbox" value="remember-me" >
+          <input type="checkbox" name="remember" >记住我
         </label>
 			</div>
 			<button class="btn btn-lg btn-primary btn-block" type="submit" >Sign in</button>
