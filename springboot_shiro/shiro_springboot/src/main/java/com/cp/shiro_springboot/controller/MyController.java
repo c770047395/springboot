@@ -9,6 +9,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class MyController {
@@ -53,5 +54,11 @@ public class MyController {
         }
 
 
+    }
+
+    @RequestMapping("/noauth")
+    @ResponseBody
+    public String noauth(){
+        return "未经授权，禁止访问";
     }
 }

@@ -323,7 +323,7 @@ public class ShiroConfig {
     anon:无需认证就可以访问
     authc：必须认证才能访问
     user：必须拥有记住我功能才能用
-    perms：拥有对某个资源的权限才嗯那个访问
+    perms：拥有对某个资源的权限才能访问
     role：拥有某个角色权限才能用
  */
 Map<String, String> filterMap = new LinkedHashMap<>();
@@ -437,3 +437,44 @@ protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) 
         return new SimpleAuthenticationInfo("",user.getPwd(),"");
     }
 ```
+
+### 授权的实现
+使用perms过滤器可将指定页面设置成需要某些权限才能进入,并且需要设置unauthorizedUrl，指定在试图进入无授权页面时的页面
+```java
+//ShiroFilterFactoryBean
+@Bean
+public ShiroFilterFactoryBean getShiroFilterFactoryBean(@Qualifier("securityManager") DefaultWebSecurityManager defaultWebSecurityManager){
+    ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
+    //设置安全管理器
+    bean.setSecurityManager(defaultWebSecurityManager);
+    Map<String, String> filterMap = new LinkedHashMap<>();
+    //授权，正常情况下，进入没有授权的页面会跳转到未授权页面
+    filterMap.put("/user/add","perms[user:add]");
+    filterMap.put("/user/update","perms[user:update]");
+    bean.setFilterChainDefinitionMap(filterMap);
+    //设置登陆的请求
+    bean.setLoginUrl("/toLogin");
+    //设置未授权页面
+    bean.setUnauthorizedUrl("/noauth");
+    return bean;
+}
+```
+授权与认证相同，都是在Realm中处理，我们可以在认真的时候将用户加入principal
+```java
+//return new SimpleAuthenticationInfo("",user.getPwd(),"");
+return new SimpleAuthenticationInfo(user,user.getPwd(),"");
+```
+```java
+protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+    System.out.println("执行了=>授权doGetAuthorizationInfo");
+    SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+    //拿到当前登陆的这个对象
+    Subject subject = SecurityUtils.getSubject();
+    User currentUser =(User) subject.getPrincipal();
+    //设置当前用户的权限
+    info.addStringPermission(currentUser.getPerms());
+
+    return info;
+}
+```
+这样就完成了页面的授权

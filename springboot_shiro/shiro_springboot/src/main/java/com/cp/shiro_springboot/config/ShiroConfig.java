@@ -25,16 +25,22 @@ public class ShiroConfig {
             anon:无需认证就可以访问
             authc：必须认证才能访问
             user：必须拥有记住我功能才能用
-            perms：拥有对某个资源的权限才嗯那个访问
+            perms：拥有对某个资源的权限才能访问
             role：拥有某个角色权限才能用
          */
         Map<String, String> filterMap = new LinkedHashMap<>();
 //        filterMap.put("/user/add","authc");
 //        filterMap.put("/user/update","authc");
+
+        //授权，正常情况下，进入没有授权的页面会跳转到未授权页面
+        filterMap.put("/user/add","perms[user:add]");
+        filterMap.put("/user/update","perms[user:update]");
+
         filterMap.put("/user/*","authc");
         bean.setFilterChainDefinitionMap(filterMap);
         //设置登陆的请求
         bean.setLoginUrl("/toLogin");
+        bean.setUnauthorizedUrl("/noauth");
         return bean;
     }
     //defaultWebSecurityManager
