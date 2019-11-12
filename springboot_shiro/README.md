@@ -380,3 +380,60 @@ protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) 
     return new SimpleAuthenticationInfo("",password,"");
 }
 ```
+
+**上面使用的是静态密码认证，现在我们改成从数据库获取：**
+
+1. 引入mybatis、druid依赖
+```xml
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.1.21</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+
+        </dependency>
+```
+2. Mybatis的配置与实体类、Mapper等的新建
+
+3. 在UserRealm中使用调用service的方法获取用户并认证
+```java
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+        System.out.println("执行了=>认证doGetAuthorizationInfo");
+
+        //用户名，密码 数据库中取
+//        String name = "root";
+//        String password = "123456";
+
+
+        UsernamePasswordToken userToken = (UsernamePasswordToken) token;
+
+        User user = userService.queryUserByName(userToken.getUsername());
+        if(user==null){
+            return null;//抛出异常 UnknownAccountException
+        }
+//        if(!userToken.getUsername().equals(name)){
+//            return null;//抛出异常 UnknownAccountException
+//        }
+        //密码认证，shiro做
+        return new SimpleAuthenticationInfo("",user.getPwd(),"");
+    }
+```
