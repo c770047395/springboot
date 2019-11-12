@@ -93,3 +93,41 @@ public Docket docket(Environment environment){
             .build();
 }
 ```
+
+### 2.3配置多个Docket
+在配置类中托管多个Docket的Bean可以在Swagger的分类栏中切换，只需要用.groupName("")方法标注组名即可
+
+### 2.4配置描述信息
+
+- @Api()/@ApiModel()：写在实体类上，生成Model文档（只有当实体类有在Controller中返回时才生效）
+- @ApiModelProperty()：写在实体类上，生成属性文档（只有当实体类有在Controller中返回时才生效）
+- @ApiOperation()：写在RequestMapping上，生成接口描述信息
+- @ApiParam：写在接口参数前，生成参数信息
+
+```java
+@ApiModel("用户实体类")
+public class User {
+    @ApiModelProperty("用户名")
+    public String username;
+    @ApiModelProperty("密码")
+    public String password;
+}
+```
+
+```java
+@RestController
+public class HelloController {
+
+    @ApiOperation("获取helloworld")
+    @GetMapping("/hello")
+    public String hello(@ApiParam("用户名") String username){
+        return "hello,"+username;
+    }
+
+    //只要接口中存在实体类，就会加入到Swagger的Model中
+    @PostMapping("/user")
+    public User user(){
+        return new User();
+    }
+}
+```

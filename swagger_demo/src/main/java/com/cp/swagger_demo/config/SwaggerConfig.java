@@ -19,6 +19,10 @@ import java.util.ArrayList;
 @EnableSwagger2 //开启Swagger2
 public class SwaggerConfig {
 
+    @Bean
+    public Docket docket1(){
+        return new Docket(DocumentationType.SWAGGER_2).groupName("A");
+    }
     //配置了Swagger的Docket的bean实例
     @Bean
     public Docket docket(Environment environment){
@@ -30,6 +34,7 @@ public class SwaggerConfig {
                 .apiInfo(apiInfo())
                 //enable是否启用Swagger，如果为false，则不能在浏览器中访问
                 .enable(flag)
+                .groupName("cp")
                 .select()
                 //RequestHandlerSelectors,配置扫描接口的方式
                 //basePackage()指定要扫描的包
