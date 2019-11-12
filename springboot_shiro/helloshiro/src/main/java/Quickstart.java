@@ -22,43 +22,29 @@ public class Quickstart {
 
     public static void main(String[] args) {
 
-        // The easiest way to create a Shiro SecurityManager with configured
-        // realms, users, roles and permissions is to use the simple INI config.
-        // We'll do that by using a factory that can ingest a .ini file and
-        // return a SecurityManager instance:
 
-        // Use the shiro.ini file at the root of the classpath
-        // (file: and url: prefixes load from files and urls respectively):
         Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro.ini");
         SecurityManager securityManager = factory.getInstance();
-
-        // for this simple example quickstart, make the SecurityManager
-        // accessible as a JVM singleton.  Most applications wouldn't do this
-        // and instead rely on their container configuration or web.xml for
-        // webapps.  That is outside the scope of this simple quickstart, so
-        // we'll just do the bare minimum so you can continue to get a feel
-        // for things.
         SecurityUtils.setSecurityManager(securityManager);
 
-        // Now that a simple Shiro environment is set up, let's see what you can do:
-
-        // get the currently executing user:
+        // 获取当前的用户对象Subject
         Subject currentUser = SecurityUtils.getSubject();
 
-        // Do some stuff with a Session (no need for a web or EJB container!!!)
+        // 通过当前的用户对象拿到Session
         Session session = currentUser.getSession();
         session.setAttribute("someKey", "aValue");
         String value = (String) session.getAttribute("someKey");
         if (value.equals("aValue")) {
-            log.info("Retrieved the correct value! [" + value + "]");
+            log.info("Subject=>session[" + value + "]");
         }
 
-        // let's login the current user so we can check against roles and permissions:
+        // 判断当前的用户是否被认证
         if (!currentUser.isAuthenticated()) {
+            //Token：令牌，当前没有获取，随机
             UsernamePasswordToken token = new UsernamePasswordToken("lonestarr", "vespa");
             token.setRememberMe(true);
             try {
-                currentUser.login(token);
+                currentUser.login(token);//执行登陆操作
             } catch (UnknownAccountException uae) {
                 log.info("There is no user with username of " + token.getPrincipal());
             } catch (IncorrectCredentialsException ice) {
@@ -99,7 +85,7 @@ public class Quickstart {
             log.info("Sorry, you aren't allowed to drive the 'eagle5' winnebago!");
         }
 
-        //all done - log out!
+        //注销
         currentUser.logout();
 
         System.exit(0);

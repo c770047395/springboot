@@ -84,7 +84,7 @@
    goodguy = winnebago:drive:eagle5
    ```
    
-   3. 测试类
+3. 测试类
    ```java
         
     import org.apache.shiro.SecurityUtils;
@@ -194,3 +194,57 @@
         }
     }
    ```
+4. 测试类解析
+
+固定语句，通过加载配置文件添加SecurityManager
+```java
+Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro.ini");
+SecurityManager securityManager = factory.getInstance();
+SecurityUtils.setSecurityManager(securityManager);
+```
+
+获取当前用户对象
+```java
+// 获取当前的用户对象Subject
+Subject currentUser = SecurityUtils.getSubject();
+```
+
+通过当前用户拿到session，并且操作session（与http的session不同，但是使用方法差不多）
+```java
+// 通过当前的用户对象拿到Session
+Session session = currentUser.getSession();
+session.setAttribute("someKey", "aValue");
+String value = (String) session.getAttribute("someKey");
+if (value.equals("aValue")) {
+    log.info("Subject=>session[" + value + "]");
+}
+```
+
+判断用户登陆状态
+```java
+currentUser.isAuthenticated()
+```
+
+用户登陆
+```java
+UsernamePasswordToken token = new UsernamePasswordToken("lonestarr", "vespa");
+token.setRememberMe(true);
+currentUser.login(token);
+```
+
+获取用户属性
+```java
+currentUser.getPrincipal()
+```
+
+判断用户有无权限
+```java
+currentUser.hasRole("schwartz")
+currentUser.isPermitted("lightsaber:wield")
+```
+
+注销
+```java
+currentUser.logout();
+```
+
