@@ -478,3 +478,32 @@ protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principal
 }
 ```
 这样就完成了页面的授权
+
+
+### thymeleaf与shiro的整合
+1. 首先还是要引入整合依赖
+```xml
+<dependency>
+    <groupId>com.github.theborakompanioni</groupId>
+    <artifactId>thymeleaf-extras-shiro</artifactId>
+    <version>2.0.0</version>
+</dependency>
+```
+
+2. 在ShiroConfig里配置注入一个Bean
+```java
+//整合ShiroDialect：用来整合Shiro和Thymeleaf
+@Bean
+public ShiroDialect getShiroDialect(){
+    return new ShiroDialect();
+}
+```
+
+3. Thymeleaf页面中可以使用shiro:xxx来使用shiro的一些方法
+```html
+<div shiro:hasPermission="user:add">
+<a th:href="@{/user/add}">添加</a><br/>
+</div>
+<div shiro:hasPermission="user:update">
+<a th:href="@{/user/update}">修改</a>
+```
