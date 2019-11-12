@@ -37,3 +37,60 @@ public class AsyncService {
 ```
 
 然后Spring就会自动帮我们开启一个线程执行异步任务
+
+# 使用Springboot发送邮件
+1. 引入依赖
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-mail</artifactId>
+</dependency>
+```
+
+2. 配置Mail信息
+```yaml
+spring.mail.username=770047395@qq.com
+spring.mail.password=mmwbtzodxqcxbeac
+spring.mail.host=smtp.qq.com
+# 开启加密验证
+spring.mail.properties.mail.smtp.ssl.enable=true
+```
+
+3. 测试
+```java
+@SpringBootTest
+class SpringbootTestApplicationTests {
+
+    @Autowired
+    JavaMailSenderImpl mailSender;
+
+    @Test
+    void contextLoads() {
+        //一个简单的邮件
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        simpleMailMessage.setSubject("你好！");
+        simpleMailMessage.setText("谢谢你");
+        simpleMailMessage.setTo("770047395@qq.com");
+        simpleMailMessage.setFrom("770047395@qq.com");
+        mailSender.send(simpleMailMessage);
+    }
+
+    @Test
+    void contextLoads2() throws MessagingException {
+        //一个复杂的邮件
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        //组装
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true);
+
+
+        helper.setSubject("hhh");
+        helper.setText("<p style='color:red'>asdlkjlasdj</p>",true);
+
+        helper.setFrom("770047395@qq.com");
+        helper.setTo("770047395@qq.com");
+
+        mailSender.send(mimeMessage);
+    }
+
+}
+```
