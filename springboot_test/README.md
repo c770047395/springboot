@@ -94,3 +94,13 @@ class SpringbootTestApplicationTests {
 
 }
 ```
+
+# 定时任务
+Springboot开启定时任务很简单
+
+1. 在启动类上加上@EnableScheduling注解开始定时任务支持
+
+2. 在需要定时执行的任务上加上@Scheduled(cron="*/5 10,12 * * * 0-7")
+
+其中使用cron表达式代表需要执行的时间，6个位置分别为（秒 分 时 日 月 周几），
+用/代表每多少秒，用'，'代表执行点，用'-'代表执行区段
