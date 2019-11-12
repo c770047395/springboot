@@ -248,3 +248,135 @@ currentUser.isPermitted("lightsaber:wield")
 currentUser.logout();
 ```
 
+## shiro的核心三大对象
+- Subject：用户
+- SecurityManager：管理所有用户
+- Realm：连接数据
+
+## springboot整合shiro的配置
+1. 引入依赖
+```xml
+<dependency>
+    <groupId>org.apache.shiro</groupId>
+    <artifactId>shiro-spring</artifactId>
+    <version>1.4.1</version>
+</dependency>
+```
+2. 编写UserRealm与ShiroConfig配置类
+
+UserRealm.java(需要继承AuthorizingRealm并重写其中的方法)
+```java
+//自定义的Realm
+public class UserRealm extends AuthorizingRealm {
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+        System.out.println("执行了=>授权doGetAuthorizationInfo");
+        return null;
+    }
+
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+        System.out.println("执行了=>认证doGetAuthorizationInfo");
+
+        return null;
+    }
+}
+```
+ShiroConfig.java
+```java
+@Configuration
+public class ShiroConfig {
+
+    //ShiroFilterFactoryBean
+    @Bean
+    public ShiroFilterFactoryBean getShiroFilterFactoryBean(@Qualifier("securityManager") DefaultWebSecurityManager defaultWebSecurityManager){
+        ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
+        bean.setSecurityManager(defaultWebSecurityManager);
+        return bean;
+    }
+    //defaultWebSecurityManager
+    @Bean(name="securityManager")
+    public DefaultWebSecurityManager getDefaultWebSecurityManager(@Qualifier("userRealm") UserRealm userRealm){
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+        //关联UserRealm
+        securityManager.setRealm(userRealm);
+
+        return securityManager;
+    }
+
+    //创建Realm对象，需要自定义
+    @Bean
+    public UserRealm userRealm(){
+        return new UserRealm();
+    }
+
+}
+```
+
+### 拦截的实现
+1. 定义静态页面
+
+2. 添加shiro内置过滤器
+```java
+//添加shiro内置过滤器
+/*
+    anon:无需认证就可以访问
+    authc：必须认证才能访问
+    user：必须拥有记住我功能才能用
+    perms：拥有对某个资源的权限才嗯那个访问
+    role：拥有某个角色权限才能用
+ */
+Map<String, String> filterMap = new LinkedHashMap<>();
+//        filterMap.put("/user/add","authc");
+//        filterMap.put("/user/update","authc");
+filterMap.put("/user/*","authc");
+bean.setFilterChainDefinitionMap(filterMap);
+//设置登陆的请求
+bean.setLoginUrl("/toLogin");
+```
+
+### 认证的实现
+认证的实现需要通过Subject对象，在Controller中获取账号密码，在Realm中进行验证。
+
+1. 获取账号密码
+```java
+@RequestMapping("/login")
+public String login(String username,String password,Model model){
+    //获取当前的用户
+    Subject subject = SecurityUtils.getSubject();
+
+    //封装用户的登陆数据
+    UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+
+    try {
+        subject.login(token);//执行登陆的方法，如果没有异常就说明ok
+        return "index";
+    } catch (UnknownAccountException e) {//用户名不存在
+        model.addAttribute("msg","用户名错误");
+        return "login";
+    } catch (IncorrectCredentialsException e) {//密码不存在
+        model.addAttribute("msg", "密码错误");
+        return "login";
+    }
+}
+```
+其中subject.login(token)会走Realm中的授权方法，并抛出多种异常，方便处理
+
+2. UserRealm中处理登陆
+```java
+@Override
+protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+    System.out.println("执行了=>认证doGetAuthorizationInfo");
+
+    //用户名，密码 数据库中取
+    String name = "root";
+    String password = "123456";
+
+    UsernamePasswordToken userToken = (UsernamePasswordToken) token;
+    if(!userToken.getUsername().equals(name)){
+        return null;//抛出异常 UnknownAccountException
+    }
+    //密码认证，shiro做
+    return new SimpleAuthenticationInfo("",password,"");
+}
+```
